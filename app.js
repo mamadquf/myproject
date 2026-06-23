@@ -127,9 +127,9 @@ function render() {
   c.classList.remove("hidden");
 
   // دیتافریم ورودی
-  c.appendChild(alertBox("info", "💡 فایل با موفقیت بارگذاری شد"));
   c.appendChild(el("h2", "text-lg font-bold mb-2", "دیتافریم ورودی"));
   c.appendChild(buildTable(DATA.slice(0, 100), COLUMNS));
+  c.appendChild(alertBox("info", "💡 فایل با موفقیت بارگذاری شد"));
   c.appendChild(el("hr", "border-gray-200 dark:border-gray-800 my-5"));
 
   // تب‌های اصلی
@@ -438,3 +438,28 @@ function plLayout(title) {
     margin: { t: 50, r: 20, b: 60, l: 50 },
   };
 }
+
+// ===== تغییر حالت روشن/تاریک =====
+function applyThemeButton() {
+  const dark = document.documentElement.classList.contains("dark");
+  const icon = $("themeIcon"), label = $("themeLabel");
+  if (icon) icon.textContent = dark ? "☀️" : "🌙";
+  // if (label) label.textContent = dark ? "حالت روشن" : "حالت تاریک";
+}
+
+function setupThemeToggle() {
+  const btn = $("themeToggle");
+  if (!btn) return;
+  applyThemeButton();
+  btn.addEventListener("click", () => {
+    const dark = document.documentElement.classList.toggle("dark");
+    localStorage.setItem("vizcraft-theme", dark ? "dark" : "light");
+    applyThemeButton();
+    // در صورت بارگذاری داده، رابط را بازسازی می‌کنیم تا رنگ نمودارها با تم جدید هماهنگ شود
+    if (DATA && DATA.length) render();
+  });
+}
+
+document.addEventListener("DOMContentLoaded", setupThemeToggle);
+// اگر اسکریپت پس از بارگذاری DOM اجرا شد، بلافاصله راه‌اندازی کن
+if (document.readyState !== "loading") setupThemeToggle();
