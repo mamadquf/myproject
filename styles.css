@@ -5,7 +5,6 @@
   font-style: normal;
   font-display: swap;
 }
-
 @font-face {
   font-family: "Vazirmatn";
   src: url("/fonts/Vazirmatn-Bold.woff2") format("woff2");
@@ -13,13 +12,12 @@
   font-style: normal;
   font-display: swap;
 }
-
 @font-face {
   font-family: "Material Symbols Outlined";
   font-style: normal;
   font-weight: 400;
   font-display: block;
-  src: url(libs/material-symbols-outlined.woff2) format("woff2");
+  src: url(/fonts/material-symbols-outlined.woff2) format("woff2");
 }
 
 * {
