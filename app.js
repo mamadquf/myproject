@@ -181,7 +181,7 @@ function render() {
   c.appendChild(buildTable(DATA.slice(0, 100), COLUMNS));
   c.appendChild(el("hr", "border-gray-200 dark:border-gray-800 my-5"));
 
-  const tabsNames = ["نمای کلی مجموعه‌داده", "شمارش مقادیر ستون‌ها", "گروه‌بندی: تحلیل داده خود را ساده کنید"];
+  const tabsNames = ["نمای کلی مجموعه‌داده", "شمارش مقادیر ستون‌ها", "گروه‌بندی"];
   const tabBar = el("div", "flex gap-2 flex-wrap mb-4 border-b border-gray-200 dark:border-gray-800 pb-2");
   const panels = el("div");
   const panelEls = [];
