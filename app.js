@@ -491,7 +491,7 @@ function setupThemeToggle() {
   applyThemeButton();
   btn.addEventListener("click", () => {
     const dark = document.documentElement.classList.toggle("dark");
-    localStorage.setItem("vizcraft-theme", dark ? "dark" : "light");
+    localStorage.setItem("theme", dark ? "dark" : "light");
     applyThemeButton();
     if (DATA && DATA.length) render();
   });
