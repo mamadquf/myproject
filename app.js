@@ -1,12 +1,9 @@
-// ===== وضعیت سراسری برنامه =====
-let DATA = [];          // آرایه‌ای از ردیف‌ها (هر ردیف یک شیء)
-let COLUMNS = [];       // نام ستون‌ها
-let isExample = false;  // آیا از مجموعه‌داده نمونه استفاده می‌شود؟
+let DATA = [];
+let COLUMNS = [];
+let isExample = false;
 
-// پسوندهای مجاز برای بارگذاری
 const ALLOWED_EXT = ["csv", "xlsx", "xls"];
 
-// ===== ابزارهای کمکی =====
 const $ = (id) => document.getElementById(id);
 const el = (tag, cls, html) => {
   const e = document.createElement(tag);
@@ -15,7 +12,6 @@ const el = (tag, cls, html) => {
   return e;
 };
 
-// تشخیص عددی بودن یک ستون
 function isNumericCol(col) {
   let seen = 0;
   for (const r of DATA) {
@@ -39,7 +35,6 @@ function colValues(col, numeric = false) {
   return out;
 }
 
-// نوع داده ستون به سبک pandas
 function dtypeOf(col) {
   if (isNumericCol(col)) {
     const vals = colValues(col, true);
@@ -48,13 +43,12 @@ function dtypeOf(col) {
   return "object";
 }
 
-// ===== ساخت جدول HTML =====
 function buildTable(rows, columns) {
   const wrap = el("div", "df-wrapper");
   const table = el("table", "df");
   const thead = el("thead");
   const trh = el("tr");
-  trh.appendChild(el("th", null, ""));            // ستون اندیس
+  trh.appendChild(el("th", null, ""));
   columns.forEach((c) => trh.appendChild(el("th", null, String(c))));
   thead.appendChild(trh);
   table.appendChild(thead);
@@ -79,8 +73,6 @@ function alertBox(type, text) {
   return el("div", map[type], text);
 }
 
-// ===== خواندن فایل =====
-// پاک‌کردن محتوا و نمایش پیام خطا (هیچ جدولی نمایش داده نمی‌شود)
 function clearContent() {
   DATA = [];
   COLUMNS = [];
@@ -100,13 +92,11 @@ function getExt(name) {
   return parts.length > 1 ? parts.pop() : "";
 }
 
-// پردازش فایل انتخاب‌شده پس از اعتبارسنجی پسوند
 function handleFile(file) {
   if (!file) return;
   isExample = false;
   const ext = getExt(file.name);
 
-  // اعتبارسنجی پسوند: در صورت نامعتبر بودن، خطا نمایش داده و هیچ جدولی رندر نمی‌شود
   if (!ALLOWED_EXT.includes(ext)) {
     showFileError(
       `❌ فرمت فایل پشتیبانی نمی‌شود. تنها فرمت‌های ${ALLOWED_EXT.join("، ")} مجاز هستند.`,
@@ -139,10 +129,9 @@ function handleFile(file) {
 
 $("fileInput").addEventListener("change", (e) => {
   handleFile(e.target.files[0]);
-  e.target.value = ""; // اجازه انتخاب مجدد همان فایل
+  e.target.value = "";
 });
 
-// پشتیبانی از کشیدن و رها کردن فایل روی ناحیه آپلود
 (function setupDragDrop() {
   const dz = document.querySelector('label[for="fileInput"]');
   if (!dz) return;
@@ -166,7 +155,6 @@ $("fileInput").addEventListener("change", (e) => {
 
 $("exampleBtn").addEventListener("click", () => {
   $("fileStatus").textContent = "در حال بارگذاری مجموعه‌داده نمونه...";
-  // مجموعه‌داده نمونه به‌صورت آفلاین درون assets/sample-data.js جاسازی شده است
   Papa.parse(window.SAMPLE_CSV, {
     header: true, dynamicTyping: true, skipEmptyLines: true,
     complete: (res) => { isExample = true; loadData(res.data, "titanic.csv (نمونه)"); },
@@ -177,26 +165,22 @@ $("exampleBtn").addEventListener("click", () => {
 function loadData(rows, fname) {
   DATA = rows.filter((r) => Object.keys(r).length > 0);
   COLUMNS = DATA.length ? Object.keys(DATA[0]) : [];
-  // استفاده از <bdi> برای ایزوله‌کردن نام فایل و اعداد لاتین در متن راست‌به‌چپ
   $("fileStatus").innerHTML =
     `فایل <bdi>«${fname}»</bdi> بارگذاری شد — ` +
     `<bdi>${DATA.length}</bdi> ردیف، <bdi>${COLUMNS.length}</bdi> ستون`;
   render();
 }
 
-// ===== رندر اصلی =====
 function render() {
   const c = $("content");
   c.innerHTML = "";
   c.classList.remove("hidden");
 
-  // دیتافریم ورودی
   c.appendChild(alertBox("info", "💡 فایل با موفقیت بارگذاری شد"));
   c.appendChild(el("h2", "text-lg font-bold mb-2", "دیتافریم ورودی"));
   c.appendChild(buildTable(DATA.slice(0, 100), COLUMNS));
   c.appendChild(el("hr", "border-gray-200 dark:border-gray-800 my-5"));
 
-  // تب‌های اصلی
   const tabsNames = ["نمای کلی مجموعه‌داده", "شمارش مقادیر ستون‌ها", "گروه‌بندی: تحلیل داده خود را ساده کنید"];
   const tabBar = el("div", "flex gap-2 flex-wrap mb-4 border-b border-gray-200 dark:border-gray-800 pb-2");
   const panels = el("div");
@@ -222,7 +206,6 @@ function render() {
   renderGroupby(panelEls[2]);
 }
 
-// ===== تب ۱: نمای کلی =====
 function renderOverview(root) {
   root.appendChild(el("h3", "text-base font-bold mb-3", "نمای کلی مجموعه‌داده"));
 
@@ -243,20 +226,16 @@ function renderOverview(root) {
   });
   root.appendChild(bar); root.appendChild(wrap);
 
-  // خلاصه
   sub[0].appendChild(el("p", "mb-2", `تعداد <b>${DATA.length}</b> سطر و <b>${COLUMNS.length}</b> ستون در مجموعه‌داده وجود دارد`));
   sub[0].appendChild(el("h4", "font-bold mb-2", "خلاصه آماری مجموعه‌داده"));
   sub[0].appendChild(buildDescribe());
 
-  // ستون‌ها
   sub[1].appendChild(el("h4", "font-bold mb-2", "نام ستون‌ها"));
   sub[1].appendChild(buildTable(COLUMNS.map((c, i) => ({ "0": c })), ["0"]));
 
-  // انواع داده
   sub[2].appendChild(el("h4", "font-bold mb-2", "انواع داده ستون‌ها"));
   sub[2].appendChild(buildTable(COLUMNS.map((c) => ({ "ستون": c, "نوع": dtypeOf(c) })), ["ستون", "نوع"]));
 
-  // سطرهای ابتدایی و انتهایی
   buildHeadTail(sub[3]);
 }
 
@@ -300,7 +279,6 @@ function buildHeadTail(root) {
     return;
   }
   const max = DATA.length;
-  // ابتدایی
   root.appendChild(el("h4", "font-bold mb-1 mt-2", "سطرهای ابتدایی"));
   const topW = el("div", "widget mb-2");
   topW.innerHTML = `<label>تعداد سطرهای ابتدایی موردنظر: <span id="topVal">5</span></label>
@@ -311,7 +289,6 @@ function buildHeadTail(root) {
   topW.querySelector("#topSlider").oninput = (e) => { topW.querySelector("#topVal").textContent = e.target.value; drawTop(+e.target.value); };
   drawTop(5);
 
-  // انتهایی
   root.appendChild(el("h4", "font-bold mb-1 mt-4", "سطرهای انتهایی"));
   const botW = el("div", "widget mb-2");
   botW.innerHTML = `<label>تعداد سطرهای انتهایی موردنظر: <span id="botVal">5</span></label>
