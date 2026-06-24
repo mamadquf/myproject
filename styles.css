@@ -181,21 +181,21 @@ input[type="range"] {
   background: #e6f4ea;
   color: #185c37;
 }
-.alert-warn {
-  background: #fef3c7;
-  color: #075985;
-}
-.alert-ok {
-  background: #dcfce7;
-  color: #166534;
-}
 .dark .alert-info {
   background: #103021;
   color: #33c481;
 }
+.alert-warn {
+  background: #fef3c7;
+  color: #000000;
+}
 .dark .alert-warn {
   background: #3a2e0c;
   color: #fcd34d;
+}
+.alert-ok {
+  background: #dcfce7;
+  color: #166534;
 }
 .dark .alert-ok {
   background: #0c3a1e;

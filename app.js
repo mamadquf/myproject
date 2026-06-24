@@ -200,7 +200,7 @@ function render() {
   c.innerHTML = "";
   c.classList.remove("hidden");
 
-  c.appendChild(alertBox("info", "فایل با موفقیت بارگذاری شد"));
+  c.appendChild(alertBox("info", "فایل با موفقیت بارگذاری شد."));
   c.appendChild(el("h2", "text-lg font-bold mb-2", "دیتافریم ورودی"));
   c.appendChild(buildTable(DATA.slice(0, 100), COLUMNS));
   c.appendChild(el("hr", "border-gray-200 dark:border-gray-800 my-5"));
