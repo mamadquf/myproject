@@ -12,6 +12,27 @@ const el = (tag, cls, html) => {
   return e;
 };
 
+const ICONS = {
+  upload: "upload_file",
+  themeDark: "dark_mode",
+  themeLight: "light_mode",
+  analytics: "analytics",
+  chart: "monitoring",
+  table: "table_view",
+  filter: "filter_alt",
+  search: "search",
+  download: "download",
+  settings: "settings",
+  info: "lightbulb",
+  ok: "check_circle",
+  warn: "warning",
+  error: "error",
+};
+
+function iconHTML(key, cls) {
+  return `<span class="material-symbols-outlined${cls ? " " + cls : ""}" aria-hidden="true">${ICONS[key]}</span>`;
+}
+
 function isNumericCol(col) {
   let seen = 0;
   for (const r of DATA) {
@@ -70,7 +91,8 @@ function buildTable(rows, columns) {
 
 function alertBox(type, text) {
   const map = { info: "alert alert-info", warn: "alert alert-warn", ok: "alert alert-ok" };
-  return el("div", map[type], text);
+  const iconKey = { info: "info", warn: "warn", ok: "ok" };
+  return el("div", map[type], `${iconHTML(iconKey[type])}<span>${text}</span>`);
 }
 
 function clearContent() {
@@ -79,12 +101,13 @@ function clearContent() {
   const c = $("content");
   c.innerHTML = "";
   c.classList.add("hidden");
+  $("resultsSection").classList.add("hidden");
 }
 
 function showFileError(text) {
   clearContent();
   $("fileStatus").innerHTML =
-    `<span class="text-red-600 dark:text-red-400 font-semibold">${text}</span>`;
+    `<span class="text-red-600 dark:text-red-400 font-semibold inline-flex items-center gap-1">${iconHTML("error", "text-base")}<span>${text}</span></span>`;
 }
 
 function getExt(name) {
@@ -99,7 +122,7 @@ function handleFile(file) {
 
   if (!ALLOWED_EXT.includes(ext)) {
     showFileError(
-      `❌ فرمت فایل پشتیبانی نمی‌شود. تنها فرمت‌های ${ALLOWED_EXT.join("، ")} مجاز هستند.`,
+      `فرمت فایل پشتیبانی نمی‌شود. تنها فرمت‌های ${ALLOWED_EXT.join("، ")} مجاز هستند.`,
     );
     return;
   }
@@ -108,7 +131,7 @@ function handleFile(file) {
     Papa.parse(file, {
       header: true, dynamicTyping: true, skipEmptyLines: true,
       complete: (res) => loadData(res.data, file.name),
-      error: () => showFileError("❌ خطا در خواندن فایل CSV."),
+      error: () => showFileError("خطا در خواندن فایل CSV."),
     });
   } else {
     const reader = new FileReader();
@@ -119,10 +142,10 @@ function handleFile(file) {
         const json = XLSX.utils.sheet_to_json(ws, { defval: "" });
         loadData(json, file.name);
       } catch (err) {
-        showFileError("❌ خطا در خواندن فایل اکسل.");
+        showFileError("خطا در خواندن فایل اکسل.");
       }
     };
-    reader.onerror = () => showFileError("❌ خطا در خواندن فایل.");
+    reader.onerror = () => showFileError("خطا در خواندن فایل.");
     reader.readAsArrayBuffer(file);
   }
 }
@@ -173,10 +196,11 @@ function loadData(rows, fname) {
 
 function render() {
   const c = $("content");
+  $("resultsSection").classList.remove("hidden");
   c.innerHTML = "";
   c.classList.remove("hidden");
 
-  c.appendChild(alertBox("info", "💡 فایل با موفقیت بارگذاری شد"));
+  c.appendChild(alertBox("info", "فایل با موفقیت بارگذاری شد"));
   c.appendChild(el("h2", "text-lg font-bold mb-2", "دیتافریم ورودی"));
   c.appendChild(buildTable(DATA.slice(0, 100), COLUMNS));
   c.appendChild(el("hr", "border-gray-200 dark:border-gray-800 my-5"));
@@ -300,7 +324,6 @@ function buildHeadTail(root) {
   drawBot(5);
 }
 
-// ===== تب ۲: شمارش مقادیر =====
 function renderValueCounts(root) {
   root.appendChild(el("h3", "text-base font-bold mb-3", "شمارش مقادیر ستون‌ها"));
   if (isExample) {
@@ -479,9 +502,9 @@ function plLayout(title) {
 
 function applyThemeButton() {
   const dark = document.documentElement.classList.contains("dark");
-  const icon = $("themeIcon"), label = $("themeLabel");
-  if (icon) icon.textContent = dark ? "☀️" : "🌙";
-  // if (label) label.textContent = dark ? "حالت روشن" : "حالت تاریک";
+  const icon = $("themeIcon"), btn = $("themeToggle");
+  if (icon) icon.textContent = dark ? ICONS.themeLight : ICONS.themeDark;
+  if (btn) btn.setAttribute("aria-label", dark ? "light mode" : "dark mode");
 }
 
 function setupThemeToggle() {
