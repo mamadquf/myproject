@@ -349,9 +349,8 @@ function renderValueCounts(root) {
   root.appendChild(det);
 }
 
-// ===== تب ۳: گروه‌بندی =====
 function renderGroupby(root) {
-  root.appendChild(el("h3", "text-base font-bold mb-3", "گروه‌بندی: تحلیل داده خود را ساده کنید"));
+  root.appendChild(el("h3", "text-base font-bold mb-3", "گروه‌بندی"));
   if (isExample) {
     root.appendChild(alertBox("warn", "در حال حاضر از یک فایل نمونه استفاده می‌کنید. برای بهره‌گیری کامل از این قابلیت، یک فایل واقعی بارگذاری کنید."));
     return;
